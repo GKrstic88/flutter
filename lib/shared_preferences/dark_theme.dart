@@ -1,7 +1,8 @@
-import 'package:flutter/cupertino.dart';
+// screens/home_screen.dart
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:provider/provider.dart';
+
+import '../provider/theme_provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +18,8 @@ class DarkTheme extends StatefulWidget {
 class _DarkThemeState extends State<DarkTheme> {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   bool? _savedTheme;
+
+  bool? get savedTheme => _savedTheme;
 
   @override
   void initState() {
@@ -54,11 +57,13 @@ class _DarkThemeState extends State<DarkTheme> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = context.watch<ThemeProvider>().savedTheme;
+
     return MaterialApp(
         title: 'Flutter Demo',
-        theme: _savedTheme!
+        theme: (context.read<ThemeProvider>().savedTheme!
             ? ThemeData(primarySwatch: Colors.blue)
-            : ThemeData(primarySwatch: Colors.green),
+            : ThemeData(primarySwatch: Colors.green)),
         home: Scaffold(
             appBar: AppBar(
               title: const Text('darkTheme'),
@@ -73,6 +78,9 @@ class _DarkThemeState extends State<DarkTheme> {
                           ElevatedButton.icon(
                             onPressed: () {
                               _savedTheme = !_savedTheme!;
+                              context
+                                  .read<ThemeProvider>()
+                                  .updateTheme(_savedTheme!);
                               _saveTheme(_savedTheme!);
                             },
                             icon: const Icon(
@@ -90,6 +98,9 @@ class _DarkThemeState extends State<DarkTheme> {
                         ElevatedButton.icon(
                           onPressed: () {
                             _savedTheme = !_savedTheme!;
+                            context
+                                .read<ThemeProvider>()
+                                .updateTheme(_savedTheme!);
                             _saveTheme(_savedTheme!);
                           },
                           icon: const Icon(
